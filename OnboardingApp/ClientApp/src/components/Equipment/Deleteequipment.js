@@ -11,42 +11,40 @@ export class Deleteequipment extends Component {
             equipmentQuantity: null
         }
     }
-}
 
-componentDidMount() {
-    const id = this.props.match.params;
+    componentDidMount() {
+        const id = this.props.match.params;
 
-    //get equipment from API corresponding to id
-}
+        //get equipment from API corresponding to id
+    }
 
-onCancel = (e) => {
-    this.props.history.push('/equipment');
-}
+    onCancel = (e) => {
+        this.props.history.push('/equipment');
+    }
 
-onConfirm = (e) => {
-    const id = this.props.match.params;
+    onConfirm = (e) => {
+        const id = this.props.match.params;
 
-    //delete() code
+        //delete() code
 
-    this.props.history.push('/equipment');
-}
+        alert(" Your equipment was successfully deleted.");
 
-render() {
-    return (
-        <div style={{ marginTop: 10 }}>
-            <h2>Delete equipment confirmation</h2>
+        this.props.history.push('/equipment');
+    }
 
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title"> {this.state.name} </h4>
-                    <button onClick={this.onCancel} class="btn btn-default">
-                        Cancel
-            </button>
-                    <button onClick={this.onConfirm} class="btn btn-danger">
-                        Confirm
-            </button>
+    render() {
+        return (
+            <div style={{ marginTop: 10 }}>
+                <h2>Delete equipment confirmation</h2>
+
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title"> {this.state.name} </h4>
+                        <button onClick={this.onCancel} class="btn btn-default"> Cancel </button>
+                        <button onClick={this.onConfirm} class="btn btn-danger"> Confirm </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    )
+        )
+    }
 }

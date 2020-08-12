@@ -12,8 +12,7 @@ export class Addbooking extends Component {
             employeeId: null,
             roomId: null,
             additionalEquipment: null,
-            requiredLayout: null,
-
+            requiredLayout: null
         }
     }
 
@@ -59,6 +58,10 @@ export class Addbooking extends Component {
         });
     }
 
+    onAddCancel = (e) => {
+        this.props.history.push('/bookings');
+    }
+
     onSubmit = (e) => {
         e.preventDefault();
 
@@ -74,6 +77,8 @@ export class Addbooking extends Component {
         }
 
         //post() code
+
+        alert(" New booking has been successfully added.");
 
         this.props.history.push('/bookings');
     }
@@ -148,6 +153,7 @@ export class Addbooking extends Component {
                     </div>
                     <div className="form-group">
                         <input type="submit" value="Add a new booking" className="btn btn-primary" />
+                        <button onClick={this.onAddCancel} className="btn btn-primary"> Cancel </button>
                     </div>
                 </form>
             </div>

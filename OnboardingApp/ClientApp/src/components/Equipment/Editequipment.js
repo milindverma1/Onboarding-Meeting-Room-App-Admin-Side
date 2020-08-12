@@ -44,6 +44,8 @@ export class Editequipment extends Component {
 
         //put() code
 
+        alert(" Your equipment has been successfully updated.");
+
         this.props.history.push('/equipment');
     }
 

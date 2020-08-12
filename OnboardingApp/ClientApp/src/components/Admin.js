@@ -1,6 +1,4 @@
 ﻿import React, { Component } from 'react';
-import { BrowserRouter as Router, Link } from 'react-router-dom';
-import { Route } from 'react-router';
 import { Rooms } from './Rooms/Rooms';
 import { Equipment } from './Equipment/Equipment';
 import { Bookings } from './Bookings/Bookings';
@@ -8,24 +6,31 @@ import { Bookings } from './Bookings/Bookings';
 export class Admin extends Component {
     static displayName = Admin.name;
 
+    updateRoomsButtonHandler = () => {
+        this.props.history.push('/rooms');
+    }
+
+    updateEquipmentButtonHandler = () => {
+        this.props.history.push('/equipment');
+    }
+
+    updateBookingsButtonHandler = () => {
+        this.props.history.push('/bookings');
+    }
+
     render() {
         return (
-            <Router>
                 <ul>
-                    <li><Link to="/rooms">
-                        <button> Update Rooms</button>
-                    </Link></li>
-                    <li><Link to="/equipment">
-                        <button> Update Equipment</button>
-                    </Link></li>
-                    <li><Link to="/bookings">
-                        <button> Update Bookings</button>
-                    </Link></li>
+                <li>
+                    <button onClick={ this.updateRoomsButtonHandler}> Update Rooms</button>
+                </li>
+                <li>
+                    <button onClick={ this.updateEquipmentButtonHandler}> Update Equipment</button>
+                </li>
+                <li>
+                    <button onClick={this.updateBookingsButtonHandler}> Update Bookings</button>
+                </li>
                 </ul>
-                <Route path='/rooms' exact component={Rooms} />
-                <Route path='/equipment' exact component={Equipment} />
-                <Route path='/bookings' exact component={Bookings} />
-            </Router>
         );
     }
 }

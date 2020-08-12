@@ -1,8 +1,4 @@
 ﻿import React, { Component } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
-import { Route } from 'react-router';
-import { About } from './About';
-import { Admin } from './Admin';
 
 export class Login extends Component {
     static displayName = Login.name;
@@ -22,7 +18,6 @@ export class Login extends Component {
     render() {
         return (
             <div>
-                <Router>
             <form>
                 <label> Username: <input type="text" name="Username" />
                 </label>
@@ -30,8 +25,6 @@ export class Login extends Component {
                 </label>
                 <button onClick={this.logInHandler}>Login</button>
             </form>
-            <Route path='/admin' exact component={Admin} />
-        </Router>
             </div>
             ) 
     }

@@ -16,6 +16,10 @@ export class Equipment extends Component {
         }
     }
 
+    onAddEquipment = () => {
+        this.props.history.push(`/equipment/addequipment`);
+    }
+
     onEditEquipment(id) {
         this.props.history.push(`/equipment/editequipment`);
         //this.props.history.push(`/equipment/editequipment` + id);
@@ -23,6 +27,10 @@ export class Equipment extends Component {
 
     onDeleteEquipment(id) {
         this.props.history.push(`/equipment/deleteequipment`);
+    }
+
+    onBackButton = () => {
+        this.props.history.push(`/admin`);
     }
 
     renderEquipmentTable(items) {
@@ -80,19 +88,11 @@ export class Equipment extends Component {
 
         return (
             <div>
-                <Router>
                     <h1>List of existing equipment.</h1>
                     <p>Here you can see existing equipment.</p>
-                    {contents}
-                    <Link to="/equipment/editequipment">
-                        <PrimaryButton>Edit existing equipment.</PrimaryButton>
-                    </Link>
-                    <Route path='/equipment/editequipment' exact component={Editequipment} />
-                    <Link to="/equipment/addequipment">
-                        <PrimaryButton>Add a new equipment </PrimaryButton>
-                    </Link>
-                    <Route path='/equipment/addequipment' exact component={Addequipment} />
-                </Router>
+                    {contents}                    
+                    <PrimaryButton onClick={this.onAddEquipment} >Add a new equipment </PrimaryButton>
+                    <PrimaryButton onClick={this.onBackButton}> Back to previous page  </PrimaryButton>
             </div>
         );
     }

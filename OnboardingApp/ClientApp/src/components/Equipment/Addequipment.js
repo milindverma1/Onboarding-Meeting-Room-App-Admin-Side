@@ -22,6 +22,11 @@ export class Addequipment extends Component {
             equipmentQuantity: e.target.value
         });
     }
+
+    onAddCancel = (e) => {
+        this.props.history.push('/equipment');
+    }
+
     onSubmit = (e) => {
         e.preventDefault();
 
@@ -32,6 +37,8 @@ export class Addequipment extends Component {
         }
 
         //post() code
+
+        alert(" New equipment has been successfully added.");
 
         this.props.history.push('/equipment');
     }
@@ -61,6 +68,7 @@ export class Addequipment extends Component {
                     </div>
                     <div className="form-group">
                         <input type="submit" value="Add equipment" className="btn btn-primary" />
+                        <button onClick={this.onAddCancel} className="btn btn-primary"> Cancel </button>
                     </div>
                 </form>
             </div>

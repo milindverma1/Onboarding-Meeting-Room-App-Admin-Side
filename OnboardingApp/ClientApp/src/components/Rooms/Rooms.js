@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react';
 import { PrimaryButton } from 'office-ui-fabric-react';
-import { DetailsList } from 'office-ui-fabric-react/lib/DetailsList';
+//import { DetailsList } from 'office-ui-fabric-react/lib/DetailsList';
 import { BrowserRouter as Router, Link } from 'react-router-dom';
 import { Route } from 'react-router';
 import { Addroom } from './Addroom';
@@ -17,6 +17,11 @@ export class Rooms extends Component {
         }
     }
 
+    onAddRoom = () => {
+        this.props.history.push(`/rooms/addroom`);
+        //this.props.history.push(`/rooms/editroom` + id);
+    }
+
     onEditRoom(id) {
         this.props.history.push(`/rooms/editroom`);
         //this.props.history.push(`/rooms/editroom` + id);
@@ -24,6 +29,10 @@ export class Rooms extends Component {
 
     onDeleteRoom(id) {
         this.props.history.push(`/rooms/deleteroom`);
+    }
+
+    onBackButton = () => {
+        this.props.history.push(`/admin`);
     }
 
      renderRoomsTable(items) {
@@ -87,19 +96,11 @@ export class Rooms extends Component {
 
         return (
             <div>
-                <Router>
                 <h1>List of existing rooms.</h1>
                     <p>Here you can see existing rooms.</p>
                     {contents}
-                    <Link to="/rooms/editroom">
-                        <PrimaryButton>Edit existing room.</PrimaryButton>
-                    </Link>
-                    <Route path='/rooms/editroom' exact component={Editroom} />
-                    <Link to="/rooms/addroom">
-                        <PrimaryButton>Add a new room </PrimaryButton>
-                    </Link>
-                    <Route path='/rooms/addroom' exact component={Addroom} />
-                </Router>
+                <PrimaryButton onClick={this.onAddRoom}>Add a new room </PrimaryButton>
+                <PrimaryButton onClick={ this.onBackButton}> Back to previous page  </PrimaryButton>
             </div>
         );
     }

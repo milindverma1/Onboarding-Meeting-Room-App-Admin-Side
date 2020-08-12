@@ -1,6 +1,6 @@
 ﻿import React, { Component } from 'react';
 import { PrimaryButton } from 'office-ui-fabric-react';
-import { DetailsList } from 'office-ui-fabric-react/lib/DetailsList';
+//import { DetailsList } from 'office-ui-fabric-react/lib/DetailsList';
 import { BrowserRouter as Router, Link } from 'react-router-dom';
 import { Route } from 'react-router';
 import { Addbooking } from './Addbooking';
@@ -17,6 +17,10 @@ export class Bookings extends Component {
         }
     }
 
+    onAddBooking = () => {
+        this.props.history.push(`/bookings/addbooking`);
+    }
+
     onEditBooking(id) {
         this.props.history.push(`/bookings/editbooking`);
         //this.props.history.push(`/bookings/editbooking` + id);
@@ -24,6 +28,10 @@ export class Bookings extends Component {
 
     onDeleteBooking(id) {
         this.props.history.push(`/bookings/deletebooking`);
+    }
+
+    onBackButton = () => {
+        this.props.history.push(`/admin`);
     }
 
     renderBookingsTable(items) {
@@ -54,12 +62,8 @@ export class Bookings extends Component {
                         <td>Rounds</td>
                         <td>
                             <div className="form-group">
-                                <button onClick={() => this.onEditBooking("123")} className="btn btn-success">
-                                    Edit Booking
-                                </button>
-                                <button onClick={() => this.onDeleteRoom("123")} className="btn btn-danger">
-                                    Delete Booking
-                                </button>
+                                <button onClick={() => this.onEditBooking("123")} className="btn btn-success"> Edit Booking </button>
+                                <button onClick={() => this.onDeleteBooking("123")} className="btn btn-danger"> Delete Booking </button>
                             </div>
                         </td>
                     </tr>
@@ -76,19 +80,11 @@ export class Bookings extends Component {
 
         return (
             <div>
-                <Router>
                     <h1>List of existing bookings.</h1>
                     <p>Here you can see existing bookings.</p>
                     {contents}
-                    <Link to="/bookings/editbooking">
-                        <PrimaryButton>Edit existing booking.</PrimaryButton>
-                    </Link>
-                    <Route path='/bookings/editbooking' exact component={Editbooking} />
-                    <Link to="/bookings/addbooking">
-                        <PrimaryButton>Add a new booking </PrimaryButton>
-                    </Link>
-                    <Route path='/bookings/addbooking' exact component={Addbooking} />
-                </Router>
+                    <PrimaryButton onClick={this.onAddBooking}>Add a new booking </PrimaryButton>
+                    <PrimaryButton onClick={this.onBackButton}> Back to previous page  </PrimaryButton>
             </div>
         );
     }

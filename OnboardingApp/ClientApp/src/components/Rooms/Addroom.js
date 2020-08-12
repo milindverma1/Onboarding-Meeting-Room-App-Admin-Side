@@ -37,6 +37,10 @@ export class Addroom extends Component {
         });
     }
 
+    onAddCancel = (e) => {
+        this.props.history.push('/rooms');
+    }
+
     onSubmit = (e) => {
         e.preventDefault();
 
@@ -49,6 +53,8 @@ export class Addroom extends Component {
         }
 
         //post() code
+
+        alert(" New room has been successfully added.");
 
         this.props.history.push('/rooms');
     }
@@ -96,6 +102,7 @@ export class Addroom extends Component {
                     </div>
                     <div className="form-group">
                         <input type="submit" value="Add a room" className="btn btn-primary" />
+                        <button onClick={this.onAddCancel} className="btn btn-primary"> Cancel </button>
                     </div>
                 </form>
             </div>

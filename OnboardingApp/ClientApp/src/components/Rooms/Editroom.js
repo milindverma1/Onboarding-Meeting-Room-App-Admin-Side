@@ -60,6 +60,9 @@ export class Editroom extends Component {
 
         //put() code
 
+
+        alert(" Your room has been successfully updated.");
+
         this.props.history.push('/rooms');
     }
 
