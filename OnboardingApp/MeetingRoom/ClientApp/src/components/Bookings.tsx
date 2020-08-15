@@ -66,6 +66,14 @@ class Bookings extends React.PureComponent<BookingsProps> {
                             <td>{booking.roomId}</td>
                             <td>{booking.additionalEquipment}</td>
                             <td>{booking.requiredLayout}</td>
+                            <div className="form-group">
+                                <button onClick={() => this.onUpdateBooking(booking.bookingId)} className="btn btn-success">
+                                    Update Booking
+                                </button>
+                                <button onClick={() => this.onDeleteBooking(booking.bookingId)} className="btn btn-danger">
+                                    Delete Booking
+                                </button>
+                            </div>
                         </tr>
                     )}
                 </tbody>
@@ -80,6 +88,15 @@ class Bookings extends React.PureComponent<BookingsProps> {
 
     onBackButton = () => {
         this.props.history.push(`/about`);
+    }
+
+    onUpdateBooking(bookingId: string) {
+        this.props.history.push(`/bookings/updatebooking/${bookingId}`);
+        //this.props.history.push(`/rooms/editroom` + id);
+    }
+
+    onDeleteBooking(bookingId: string) {
+        this.props.history.push(`/bookings/deletebooking/${bookingId}`);
     }
 }
 

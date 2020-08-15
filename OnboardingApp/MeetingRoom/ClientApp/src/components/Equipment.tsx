@@ -56,6 +56,14 @@ class Equipment extends React.PureComponent<EquipmentProps> {
                             <td>{equipment.equipmentId} </td>
                             <td>{equipment.equipmentName}</td>
                             <td>{equipment.equipmentQuantity}</td>
+                            <div className="form-group">
+                                <button onClick={() => this.onUpdateEquipment(equipment.equipmentId)} className="btn btn-success">
+                                    Update Equipment
+                                </button>
+                                <button onClick={() => this.onDeleteEquipment(equipment.equipmentId)} className="btn btn-danger">
+                                    Delete Equipment
+                                </button>
+                            </div>
                         </tr>
                     )}
                 </tbody>
@@ -70,6 +78,15 @@ class Equipment extends React.PureComponent<EquipmentProps> {
 
     onBackButton = () => {
         this.props.history.push(`/about`);
+    }
+
+    onUpdateEquipment(equipmentId: string) {
+        this.props.history.push(`/equipment/updateequipment/${equipmentId}`);
+        //this.props.history.push(`/rooms/editroom` + id);
+    }
+
+    onDeleteEquipment(equipmentId: string) {
+        this.props.history.push(`/equipment/deleteequipment/${equipmentId}`);
     }
 }
 

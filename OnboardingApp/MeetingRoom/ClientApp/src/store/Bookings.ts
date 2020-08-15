@@ -30,7 +30,7 @@ interface RequestBookingsAction {
 
 interface ReceiveBookingsAction {
     type: 'RECEIVE_BOOKINGS';
-    tempbookings: Booking[];
+    bookings: Booking[];
 }
 
 interface AddBookingsAction {
@@ -38,46 +38,35 @@ interface AddBookingsAction {
     booking: Booking;
 }
 
+interface UpdateBookingAction {
+    type: 'UPDATE_BOOKING';
+    booking: Booking;
+}
 
-const tempbookings: Booking[] = [
-    {
-        bookingId: '12X',
-        bookingDate: "27/07/2020",
-        meetingDate: "15/08/2020",
-        meetingTime: 11,
-        employeeId: '13B',
-        roomId: '104A',
-        additionalEquipment: 'Projector',
-        requiredLayout: 'Rounds'
-    }
-];
+interface DeleteBookingAction {
+    type: 'DELETE_BOOKING';
+}
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
 
-type KnownAction = RequestBookingsAction | ReceiveBookingsAction | AddBookingsAction;
+type KnownAction = RequestBookingsAction | ReceiveBookingsAction | AddBookingsAction | UpdateBookingAction | DeleteBookingAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
 // They don't directly mutate state, but they can have external side-effects (such as loading data).
 
 export const actionCreators = {
-    requestBookings: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    requestBookings: (): AppThunkAction<KnownAction> => async (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
         const appState = getState();
         if (appState && appState.bookings && appState.bookings.bookings.length == 0) {
 
-            //Uncomment it once connected with backend.
+            const response = await fetch(`api/Booking/GetBookings`);
+            const bookings = await response.json();
 
-            /**fetch(`api/rooms`)
-                .then(response => response.json() as Promise<Room[]>)
-                .then(data => {
-                    dispatch({ type: 'RECEIVE_ROOMS', temprooms }); // Hard coded second parameter- rooms: data
-                });*/
+            dispatch({ type: 'RECEIVE_BOOKINGS', bookings });
 
-            dispatch({ type: 'RECEIVE_BOOKINGS', tempbookings }); // Hard coded second parameter- rooms: data
-
-            //dispatch({ type: 'REQUEST_ROOMS' });
         }
         dispatch({ type: 'REQUEST_BOOKINGS' });
     },
@@ -86,9 +75,66 @@ export const actionCreators = {
 
         const appState = getState();
 
-        //post code here. Async()
+        fetch(`api/Booking/AddBooking`, {
+            method: 'POST',
 
-        dispatch({ type: 'ADD_BOOKINGS', booking });
+            body: JSON.stringify(booking),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+            })
+            .then(data => {
+                dispatch({ type: 'ADD_BOOKINGS', booking });
+            });
+
+    },
+
+    updateBooking: (booking: Booking): AppThunkAction<KnownAction> => (dispatch, getState) => {
+
+        const appState = getState();
+
+        fetch(`api/Booking/UpdateBooking/${booking.bookingId}`, {
+            method: 'PUT',
+
+            body: JSON.stringify(booking),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+            })
+            .then(data => {
+                dispatch({ type: 'UPDATE_BOOKING', booking });
+            });
+
+    },
+
+    deleteBooking: (bookingId: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+
+        const appState = getState();
+
+        fetch(`api/Booking/DeleteBooking/${bookingId}`, {
+            method: 'DELETE',
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+            })
+            .then(data => {
+                dispatch({ type: 'DELETE_BOOKING' });
+            });
     }
 };
 
@@ -111,27 +157,23 @@ export const reducer: Reducer<BookingsState> = (state: BookingsState | undefined
             };
         case 'RECEIVE_BOOKINGS':
             return {
-                bookings: action.tempbookings,
+                bookings: action.bookings,
                 isLoading: false
             };
         case 'ADD_BOOKINGS':
-            {
-                var newBookings = tempbookings;
-                newBookings.push({
-                    bookingId: action.booking.bookingId,
-                    bookingDate: action.booking.bookingDate,
-                    meetingDate: action.booking.meetingDate,
-                    meetingTime: action.booking.meetingTime,
-                    employeeId: action.booking.employeeId,
-                    roomId: action.booking.roomId,
-                    additionalEquipment: action.booking.additionalEquipment,
-                    requiredLayout: action.booking.requiredLayout
-                });
-
-                return {
-                    bookings: newBookings,
-                    isLoading: false
-                };
+            return {
+                bookings: state.bookings,
+                isLoading: false
+            };
+        case 'UPDATE_BOOKING':
+            return {
+                bookings: state.bookings,
+                isLoading: false
+            }
+        case 'DELETE_BOOKING':
+            return {
+                bookings: state.bookings,
+                isLoading: false
             }
         default:
             return unloadedState;

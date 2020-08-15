@@ -4,16 +4,15 @@ import { RouteComponentProps } from 'react-router';
 //import { Link } from 'react-router-dom';
 import { ApplicationState } from '../store';
 import * as BookingsStore from '../store/Bookings';
-//import * as WeatherForecastsStore from '.../store/WeatherForecasts';
 
 // At runtime, Redux will merge together...
 type BookingsProps =
     BookingsStore.BookingsState // ... state we've requested from the Redux store
     & typeof BookingsStore.actionCreators // ... plus action creators we've requested
-    & RouteComponentProps<{ bookingId: string }>; // ... plus incoming routing parameters
+    & RouteComponentProps<{ bookingid: string }>; // ... plus incoming routing parameters
 
 
-class Addbooking extends React.PureComponent<BookingsProps> {
+class Updatebooking extends React.PureComponent<BookingsProps> {
     // This method is called when the component is first added to the document
 
     //public componentDidMount() {
@@ -36,8 +35,7 @@ class Addbooking extends React.PureComponent<BookingsProps> {
         requiredLayout: '',
     }
 
-
-    onAddCancel = () => {
+    onEditCancel = () => {
         this.props.history.push('/bookings');
     }
 
@@ -45,11 +43,13 @@ class Addbooking extends React.PureComponent<BookingsProps> {
 
         //e.preventDefault();
 
+        const id = this.props.match.params.bookingid;
+
         var today = new Date();
-        var date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear() ;
+        var date = today.getDate() + '/' + (today.getMonth() + 1) + '/' + today.getFullYear();
 
         const booking: BookingsStore.Booking = {
-            bookingId: Math.floor(Math.random() * 100).toString(),
+            bookingId: id,
             bookingDate: date,
             meetingDate: this.state.meetingDate,
             meetingTime: this.state.meetingTime,
@@ -59,9 +59,9 @@ class Addbooking extends React.PureComponent<BookingsProps> {
             requiredLayout: this.state.requiredLayout
         }
 
-        this.props.addBooking(booking);
+        this.props.updateBooking(booking);
 
-        alert(" New booking has been successfully added.");
+        alert(" Booking has been successfully updated.");
 
         this.props.history.push('/bookings');
     }
@@ -71,7 +71,7 @@ class Addbooking extends React.PureComponent<BookingsProps> {
         return (
             <React.Fragment>
                 <div className="booking-form" >
-                    <h3>Add new booking</h3>
+                    <h3>Update existing booking</h3>
                     <form onSubmit={ this.onSubmit  }>
                         <div className="form-group">
                             <label>Meeting Date </label>
@@ -140,8 +140,8 @@ class Addbooking extends React.PureComponent<BookingsProps> {
                             />
                         </div>
                         <div className="form-group">
-                            <input type="submit" value="Add a booking" className="btn btn-primary" />
-                            <button onClick={this.onAddCancel} className="btn btn-primary"> Cancel </button>
+                            <input type="submit" value="Update booking" className="btn btn-primary" />
+                            <button onClick={this.onEditCancel} className="btn btn-primary"> Cancel </button>
                         </div>
                     </form>
                 </div>
@@ -153,4 +153,4 @@ class Addbooking extends React.PureComponent<BookingsProps> {
 export default connect(
     (state: ApplicationState) => state.bookings, // Selects which state properties are merged into the component's props
     BookingsStore.actionCreators // Selects which action creators are merged into the component's props
-)(Addbooking as any);
+)(Updatebooking as any);

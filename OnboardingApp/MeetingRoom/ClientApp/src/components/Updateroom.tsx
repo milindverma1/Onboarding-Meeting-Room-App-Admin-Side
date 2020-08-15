@@ -10,10 +10,10 @@ import * as RoomsStore from '../store/Rooms';
 type RoomsProps =
     RoomsStore.RoomsState // ... state we've requested from the Redux store
     & typeof RoomsStore.actionCreators // ... plus action creators we've requested
-    & RouteComponentProps<{ roomId: string }>; // ... plus incoming routing parameters
+    & RouteComponentProps<{ roomid: string }>; // ... plus incoming routing parameters
 
 
-class Addroom extends React.PureComponent<RoomsProps> {
+class Updateroom extends React.PureComponent<RoomsProps> {
     // This method is called when the component is first added to the document
 
     //public componentDidMount() {
@@ -35,7 +35,7 @@ class Addroom extends React.PureComponent<RoomsProps> {
         }
 
 
-    onAddCancel = () => {
+    onEditCancel = () => {
         this.props.history.push('/rooms');
     }
 
@@ -43,8 +43,10 @@ class Addroom extends React.PureComponent<RoomsProps> {
 
         //e.preventDefault();
 
+        const id = this.props.match.params.roomid;
+
         const room: RoomsStore.Room = {
-            roomId: Math.floor(Math.random()*100).toString(),
+            roomId: id,
             roomType: this.state.roomType,
             location: this.state.location,
             capacity: this.state.capacity,
@@ -52,9 +54,9 @@ class Addroom extends React.PureComponent<RoomsProps> {
             status: this.state.roomStatus
         }
 
-        this.props.addRoom(room);
+        this.props.updateRoom(room);
 
-        alert(" New room has been successfully added.");
+        alert(" Room has been successfully edited.");
 
         this.props.history.push('/rooms');
     }
@@ -64,7 +66,7 @@ class Addroom extends React.PureComponent<RoomsProps> {
         return (
             <React.Fragment>
                 <div className="room-form" >
-                    <h3>Add new room</h3>
+                    <h3>Update existing room</h3>
                     <form onSubmit={ this.onSubmit  }>
                         <div className="form-group">
                             <label>Room type: </label>
@@ -122,8 +124,8 @@ class Addroom extends React.PureComponent<RoomsProps> {
                             />
                         </div>
                         <div className="form-group">
-                            <input type="submit" value="Add a room" className="btn btn-primary" />
-                            <button onClick={this.onAddCancel} className="btn btn-primary"> Cancel </button>
+                            <input type="submit" value="Update room" className="btn btn-primary" />
+                            <button onClick={this.onEditCancel} className="btn btn-primary"> Cancel </button>
                         </div>
                     </form>
                 </div>
@@ -135,4 +137,4 @@ class Addroom extends React.PureComponent<RoomsProps> {
 export default connect(
     (state: ApplicationState) => state.rooms, // Selects which state properties are merged into the component's props
     RoomsStore.actionCreators // Selects which action creators are merged into the component's props
-)(Addroom as any);
+)(Updateroom as any);

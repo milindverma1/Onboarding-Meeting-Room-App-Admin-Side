@@ -11,11 +11,11 @@ export interface RoomsState {
 
 export interface Room {
     roomId: string;
-    RoomType: string;
-    Location: string;
-    Capacity: number;
-    Description: string;
-    Status: string;
+    roomType: string;
+    location: string;
+    capacity: number;
+    description: string;
+    status: string;
 }
 
 enum roomStatus {
@@ -33,7 +33,7 @@ interface RequestRoomsAction {
 
 interface ReceiveRoomsAction {
     type: 'RECEIVE_ROOMS';
-    temprooms: Room[];
+    rooms: Room[];
 }
 
 interface AddRoomsAction {
@@ -41,50 +41,43 @@ interface AddRoomsAction {
     room: Room;
 }
 
+interface UpdateRoomAction {
+    type: 'UPDATE_ROOM';
+    room: Room;
+}
 
-const temprooms: Room[] = [
-    {
-        roomId: "13B",
-        RoomType: "ABC",
-        Location: "Hyd B3",
-        Capacity: 35,
-        Description: "Nice room!",
-        Status: "Available"
-    },
-    {
-        roomId: "13C",
-        RoomType: "ABC",
-        Location: "Hyd B3",
-        Capacity: 40,
-        Description: "Nice room!",
-        Status: "Available"
-    }
-];
+interface DeleteRoomAction {
+    type: 'DELETE_ROOM';
+}
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
 
-type KnownAction = RequestRoomsAction | ReceiveRoomsAction | AddRoomsAction;
+type KnownAction = RequestRoomsAction | ReceiveRoomsAction | AddRoomsAction | UpdateRoomAction | DeleteRoomAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
 // They don't directly mutate state, but they can have external side-effects (such as loading data).
 
 export const actionCreators = {
-    requestRooms: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    requestRooms: (): AppThunkAction<KnownAction> => async (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
         const appState = getState();
         if (appState && appState.rooms && appState.rooms.rooms.length == 0) {
 
             //Uncomment it once connected with backend.
 
-            /**fetch(`api/rooms`)
-                .then(response => response.json() as Promise<Room[]>)
-                .then(data => {
-                    dispatch({ type: 'RECEIVE_ROOMS', temprooms }); // Hard coded second parameter- rooms: data
-                });*/
+            const response = await fetch(`api/Room/GetRooms`);
+            const rooms = await response.json();
 
-            dispatch({ type: 'RECEIVE_ROOMS', temprooms }); // Hard coded second parameter- rooms: data
+            dispatch({ type: 'RECEIVE_ROOMS', rooms });
+
+                //.then(response => response.json() as Promise<Room[]>)
+                //.then(data => {
+                //    dispatch({ type: 'RECEIVE_ROOMS', rooms: data }); // Hard coded second parameter- rooms: data
+                //});
+
+            //dispatch({ type: 'RECEIVE_ROOMS', temprooms }); // Hard coded second parameter- rooms: data
 
             //dispatch({ type: 'REQUEST_ROOMS' });
         }
@@ -95,9 +88,67 @@ export const actionCreators = {
 
         const appState = getState();
 
-        //post code here. Async()
+        fetch(`api/Room/AddRoom`, {
+            method: 'POST',
+            
+            body: JSON.stringify(room),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+            })
+            .then(data => {
+                dispatch({ type: 'ADD_ROOMS', room }); 
+            });
 
-        dispatch({ type: 'ADD_ROOMS', room }); 
+    },
+
+    updateRoom: (room: Room): AppThunkAction<KnownAction> => (dispatch, getState) => {
+
+        const appState = getState();
+
+        fetch(`api/Room/UpdateRoom/${room.roomId}`, {
+            method: 'PUT',
+
+            body: JSON.stringify(room),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+            })
+            .then(data => {
+                dispatch({ type: 'UPDATE_ROOM', room });
+            });
+
+        //post code here. Async()
+    },
+
+    deleteRoom: (roomId: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+
+        const appState = getState();
+
+        fetch(`api/Room/DeleteRoom/${roomId}`, {
+            method: 'DELETE',
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+            })
+            .then(data => {
+                dispatch({ type: 'DELETE_ROOM'});
+            });
     }
 };
 
@@ -120,24 +171,23 @@ export const reducer: Reducer<RoomsState> = (state: RoomsState | undefined, inco
             };
         case 'RECEIVE_ROOMS':
             return {
-                rooms: action.temprooms,
+                rooms: action.rooms,
                 isLoading: false
             };
         case 'ADD_ROOMS':
-            {
-                var newRooms = temprooms;
-                newRooms.push({
-                    roomId: action.room.roomId,
-                    RoomType: action.room.RoomType,
-                    Location: action.room.Location,
-                    Capacity: action.room.Capacity,
-                    Description: action.room.Description,
-                    Status: action.room.Status
-                });
                 return {
-                    rooms: newRooms,
+                    rooms: state.rooms,
                     isLoading: false
                 };
+        case 'UPDATE_ROOM':
+            return {
+                rooms: state.rooms,
+                isLoading: false
+            }
+        case 'DELETE_ROOM':
+            return {
+                rooms: state.rooms,
+                isLoading: false
             }
         default:
             return unloadedState;

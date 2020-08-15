@@ -12,7 +12,7 @@ export interface EquipmentState {
 export interface Equipment {
     equipmentId: string;
     equipmentName: string;
-    equipmentQuantity: string;
+    equipmentQuantity: number;
 }
 
 // -----------------
@@ -25,7 +25,7 @@ interface RequestEquipmentAction {
 
 interface ReceiveEquipmentAction {
     type: 'RECEIVE_EQUIPMENT';
-    tempequipment: Equipment[];
+    equipment: Equipment[];
 }
 
 interface AddEquipmentAction {
@@ -33,46 +33,35 @@ interface AddEquipmentAction {
     equipment: Equipment;
 }
 
+interface UpdateEquipmentAction {
+    type: 'UPDATE_EQUIPMENT';
+    equipment: Equipment;
+}
 
-const tempequipment: Equipment[] = [
-    {
-        equipmentId: "A310",
-        equipmentName: "Projector",
-        equipmentQuantity: "25",
-    },
-    {
-        equipmentId: "B10",
-        equipmentName: "Notepad",
-        equipmentQuantity: "35",
-    }
-];
+interface DeleteEquipmentAction {
+    type: 'DELETE_EQUIPMENT';
+}
+
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
 
-type KnownAction = RequestEquipmentAction | ReceiveEquipmentAction | AddEquipmentAction;
+type KnownAction = RequestEquipmentAction | ReceiveEquipmentAction | AddEquipmentAction | UpdateEquipmentAction | DeleteEquipmentAction; 
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
 // They don't directly mutate state, but they can have external side-effects (such as loading data).
 
 export const actionCreators = {
-    requestEquipment: (): AppThunkAction<KnownAction> => (dispatch, getState) => {
+    requestEquipment: (): AppThunkAction<KnownAction> => async (dispatch, getState) => {
         // Only load data if it's something we don't already have (and are not already loading)
         const appState = getState();
         if (appState && appState.equipment && appState.equipment.equipment.length == 0) {
 
-            //Uncomment it once connected with backend.
+            const response = await fetch(`api/Equipment/GetEquipment`);
+            const equipment = await response.json();
 
-            /**fetch(`api/rooms`)
-                .then(response => response.json() as Promise<Room[]>)
-                .then(data => {
-                    dispatch({ type: 'RECEIVE_ROOMS', temprooms }); // Hard coded second parameter- rooms: data
-                });*/
-
-            dispatch({ type: 'RECEIVE_EQUIPMENT', tempequipment }); // Hard coded second parameter- rooms: data
-
-            //dispatch({ type: 'REQUEST_ROOMS' });
+            dispatch({ type: 'RECEIVE_EQUIPMENT', equipment });
         }
         dispatch({ type: 'REQUEST_EQUIPMENT' });
     },
@@ -81,9 +70,65 @@ export const actionCreators = {
 
         const appState = getState();
 
-        //post code here. Async()
+        fetch(`api/Equipment/AddEquipment`, {
+            method: 'POST',
 
-        dispatch({ type: 'ADD_EQUIPMENT', equipment }); 
+            body: JSON.stringify(equipment),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+            })
+            .then(data => {
+                dispatch({ type: 'ADD_EQUIPMENT', equipment });
+            });
+    },
+
+    updateEquipment: (equipment: Equipment): AppThunkAction<KnownAction> => (dispatch, getState) => {
+
+        const appState = getState();
+
+        fetch(`api/Equipment/UpdateEquipment/${equipment.equipmentId}`, {
+            method: 'PUT',
+
+            body: JSON.stringify(equipment),
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+            })
+            .then(data => {
+                dispatch({ type: 'UPDATE_EQUIPMENT', equipment });
+            });
+
+    },
+
+    deleteEquipment: (equipmentId: string): AppThunkAction<KnownAction> => (dispatch, getState) => {
+
+        const appState = getState();
+
+        fetch(`api/Equipment/DeleteEquipment/${equipmentId}`, {
+            method: 'DELETE',
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("HTTP status " + response.status);
+                }
+            })
+            .then(data => {
+                dispatch({ type: 'DELETE_EQUIPMENT' });
+            });
     }
 };
 
@@ -106,21 +151,23 @@ export const reducer: Reducer<EquipmentState> = (state: EquipmentState | undefin
             };
         case 'RECEIVE_EQUIPMENT':
             return {
-                equipment: action.tempequipment,
+                equipment: action.equipment,
                 isLoading: false
             };
         case 'ADD_EQUIPMENT':
-            {
-                var newEquipment = tempequipment;
-                newEquipment.push({
-                    equipmentId: action.equipment.equipmentId,
-                    equipmentName: action.equipment.equipmentName,
-                    equipmentQuantity: action.equipment.equipmentQuantity
-                });
-                return {
-                    equipment: newEquipment,
-                    isLoading: false
-                };
+            return {
+                equipment: state.equipment,
+                isLoading: false
+            };
+        case 'UPDATE_EQUIPMENT':
+            return {
+                equipment: state.equipment,
+                isLoading: false
+            }
+        case 'DELETE_EQUIPMENT':
+            return {
+                equipment: state.equipment,
+                isLoading: false
             }
         default:
             return unloadedState;

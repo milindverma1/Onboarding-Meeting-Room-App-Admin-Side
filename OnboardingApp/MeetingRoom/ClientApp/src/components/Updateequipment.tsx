@@ -4,16 +4,16 @@ import { RouteComponentProps } from 'react-router';
 //import { Link } from 'react-router-dom';
 import { ApplicationState } from '../store';
 import * as EquipmentStore from '../store/Equipment';
-//import * as WeatherForecastsStore from '.../store/WeatherForecasts';
+
 
 // At runtime, Redux will merge together...
 type EquipmentProps =
     EquipmentStore.EquipmentState // ... state we've requested from the Redux store
     & typeof EquipmentStore.actionCreators // ... plus action creators we've requested
-    & RouteComponentProps<{ equipmentId: string }>; // ... plus incoming routing parameters
+    & RouteComponentProps<{ equipmentid: string }>; // ... plus incoming routing parameters
 
 
-class Addequipment extends React.PureComponent<EquipmentProps> {
+class Updateequipment extends React.PureComponent<EquipmentProps> {
     // This method is called when the component is first added to the document
 
     //public componentDidMount() {
@@ -31,7 +31,7 @@ class Addequipment extends React.PureComponent<EquipmentProps> {
         equipmentQuantity: 0,
     }
 
-    onAddCancel = () => {
+    onEditCancel = () => {
         this.props.history.push('/equipment');
     }
 
@@ -39,15 +39,17 @@ class Addequipment extends React.PureComponent<EquipmentProps> {
 
         //e.preventDefault();
 
+        const id = this.props.match.params.equipmentid;
+
         const equipment: EquipmentStore.Equipment = {
-            equipmentId: Math.floor(Math.random() * 100).toString(),
+            equipmentId: id,
             equipmentName: this.state.equipmentName,
             equipmentQuantity: this.state.equipmentQuantity
         }
 
-        this.props.addEquipment(equipment);
+        this.props.updateEquipment(equipment);
 
-        alert(" New equipment has been successfully added.");
+        alert(" Equipment has been successfully edited.");
 
         this.props.history.push('/equipment');
     }
@@ -57,8 +59,8 @@ class Addequipment extends React.PureComponent<EquipmentProps> {
         return (
             <React.Fragment>
                 <div className="equipment-form" >
-                    <h3>Add new equipment</h3>
-                    <form onSubmit={this.onSubmit}>
+                    <h3>Update existing equipment</h3>
+                    <form onSubmit={ this.onSubmit  }>
                         <div className="form-group">
                             <label>Equipment Name </label>
                             <input
@@ -82,8 +84,8 @@ class Addequipment extends React.PureComponent<EquipmentProps> {
                             />
                         </div>
                         <div className="form-group">
-                            <input type="submit" value="Add a equipment" className="btn btn-primary" />
-                            <button onClick={this.onAddCancel} className="btn btn-primary"> Cancel </button>
+                            <input type="submit" value="Update Equipment" className="btn btn-primary" />
+                            <button onClick={this.onEditCancel} className="btn btn-primary"> Cancel </button>
                         </div>
                     </form>
                 </div>
@@ -95,4 +97,4 @@ class Addequipment extends React.PureComponent<EquipmentProps> {
 export default connect(
     (state: ApplicationState) => state.equipment, // Selects which state properties are merged into the component's props
     EquipmentStore.actionCreators // Selects which action creators are merged into the component's props
-)(Addequipment as any);
+)(Updateequipment as any);

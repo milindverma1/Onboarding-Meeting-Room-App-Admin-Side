@@ -51,17 +51,26 @@ class Rooms extends React.PureComponent<RoomsProps> {
                         <th>Capacity</th>
                         <th>Description</th>
                         <th>Room Status</th>
+                        <th>Action Required</th>
                     </tr>
                 </thead>
                 <tbody>
                     {this.props.rooms.map((room: RoomsStore.Room) =>
                         <tr key={room.roomId}>
                             <td>{ room.roomId} </td>
-                            <td>{room.RoomType}</td>
-                            <td>{room.Location}</td>
-                            <td>{room.Capacity}</td>
-                            <td>{room.Description}</td>
-                            <td>{room.Status}</td>
+                            <td>{room.roomType}</td>
+                            <td>{room.location}</td>
+                            <td>{room.capacity}</td>
+                            <td>{room.description}</td>
+                            <td>{room.status}</td>
+                            <div className="form-group">
+                                <button onClick={() => this.onUpdateRoom(room.roomId)} className="btn btn-success">
+                                    Update Room
+                                </button>
+                                <button onClick={() => this.onDeleteRoom(room.roomId)} className="btn btn-danger">
+                                    Delete Room
+                                </button>
+                            </div>
                         </tr>
                     )}
                 </tbody>
@@ -76,6 +85,15 @@ class Rooms extends React.PureComponent<RoomsProps> {
 
     onBackButton = () => {
         this.props.history.push(`/about`);
+    }
+
+    onUpdateRoom(roomId: string) {
+        this.props.history.push(`/rooms/updateroom/${roomId}`);
+        //this.props.history.push(`/rooms/editroom` + id);
+    }
+
+    onDeleteRoom(roomId: string) {
+        this.props.history.push(`/rooms/deleteroom/${roomId}`);
     }
 }
 
